@@ -121,5 +121,11 @@ stds.luacontrollerwriteable = {
 	},
 }
 
-files["*.lua"].std = "sandboxcommon+luacontroller"
+stds.combinescript = {
+	read_globals = {
+		"require",
+	}
+}
+
+files["*.lua"].std = "sandboxcommon+luacontroller+combinescript"
 files["test-*.lua"].std = "sandboxcommonwriteable+luacontrollerwriteable+luajit"

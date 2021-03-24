@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+set -u
+set -o pipefail
+
+cat << 'EOF'
+local require_cache = {}
+local function require(module_name)
+	local entry = require_cache[module_name]
+	if type(entry) == "function" then
+		entry = entry(module_name)
+		require_cache[module_name] = entry
+	end
+	return entry
+end
+
+EOF
+
+main_file="$1"
+shift
+
+for file in "$@"; do
+	echo 'require_cache["'"${file%.lua}"'"] = function(...)'
+	echo "--[["
+	echo "BEGIN CONTENTS OF ${file}"
+	echo "]]"
+	cat "${file}"
+	echo "--[["
+	echo "END CONTENTS OF ${file}"
+	echo "]]"
+	echo "end"
+	echo
+done
+
+echo "--[["
+echo "BEGIN CONTENTS OF ${main_file}"
+echo "]]"
+cat "${main_file}"
+echo "--[["
+echo "END CONTENTS OF ${main_file}"
+echo "]]"
